@@ -1,10 +1,10 @@
 <?php
-include 'Database.php';
-include 'Barang.php';
-include 'Anggota.php';
-include 'Admin.php';
-include 'Peminjaman.php';
-include 'PeminjamanController.php';
+include '../Controller/Database.php';
+include '../Controller/Barang.php';
+include '../Controller/Anggota.php';
+include '../Model/Admin.php';
+include '../Mode/Peminjaman.php';
+include '../Controller/PeminjamanController.php';
 
 $database = new Database();
 $koneksi = $database->koneksi;

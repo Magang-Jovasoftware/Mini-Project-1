@@ -1,7 +1,7 @@
 <?php 
-include 'Database.php';
-include 'Barang.php';
-include 'BarangController.php';
+include '../Controller/Database.php';
+include '../Model/Barang.php';
+include '../Controller/BarangController.php';
 
 $database = new Database();
 $koneksi = $database->koneksi;
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_FILES['gambar']) && $_FILES['gambar']['error'] == 0) {
             $gambarNama = $_FILES['gambar']['name'];
             $gambarTmp = $_FILES['gambar']['tmp_name'];
-            $location = 'images/' . $gambarNama;  // Update the location
+            $location = '../images/' . $gambarNama;  // Update the location
 
             if (move_uploaded_file($gambarTmp, $location)) {
                 $gambar = $location;
@@ -52,7 +52,7 @@ $daftarBarang = $barangController->getDaftarBarang();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Barang</title>
-    <link href="./output.css" rel="stylesheet">
+    <link href="../output.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
 <div class="container mx-auto p-8 mt-10 bg-white rounded-lg shadow-lg">
@@ -118,7 +118,7 @@ $daftarBarang = $barangController->getDaftarBarang();
         </tbody>
     </table>
 
-    <a href="index.php" class="text-blue-500">Kembali ke Daftar Peminjaman</a>
+    <a href="../View/index.php" class="text-blue-500">Kembali ke Daftar Peminjaman</a>
 </div>
 
 <script>

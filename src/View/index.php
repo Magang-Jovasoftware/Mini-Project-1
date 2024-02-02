@@ -1,11 +1,11 @@
 <?php
-include 'Database.php';
-include 'Barang.php';
-include 'Anggota.php';
-include 'Admin.php';
-include 'Peminjaman.php';
-include 'PeminjamanController.php';
-include 'BarangController.php';
+include '../Controller/Database.php';
+include '../Model/Barang.php';
+include '../Model/Anggota.php';
+include '../Model/Admin.php';
+include '../Model/Peminjaman.php';
+include '../Controller/PeminjamanController.php';
+include '../Controller/BarangController.php';
 
 $database = new Database();
 $koneksi = $database->koneksi;
@@ -23,7 +23,7 @@ $daftarBarang = $barangController->getDaftarBarang();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peminjaman Barang</title>
-    <link href="./output.css" rel="stylesheet">
+    <link href="../output.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
 <div class="container mx-auto p-8 mt-10 bg-white rounded-lg shadow-lg">
@@ -70,8 +70,8 @@ $daftarBarang = $barangController->getDaftarBarang();
 
     <!-- Tambahkan navigasi -->
     <div class="mb-6">
-        <a href="tambah_barang.php" class="bg-green-500 text-white px-4 py-2 rounded">Daftar Barang</a>
-        <a href="pengembalian_barang.php" class="bg-green-500 text-white px-4 py-2 rounded">Pengembalian Barang</a>
+        <a href="../View/tambah_barang.php" class="bg-green-500 text-white px-4 py-2 rounded">Daftar Barang</a>
+        <a href="../View/pengembalian_barang.php" class="bg-green-500 text-white px-4 py-2 rounded">Pengembalian Barang</a>
     </div>
 
 

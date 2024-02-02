@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 02, 2024 at 07:59 AM
+-- Generation Time: Feb 02, 2024 at 09:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -76,10 +76,11 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id`, `nama`, `stok`, `gambar`) VALUES
-(17, 'Laptop', 8, 'images/Laptop.jpg'),
-(18, 'Keyboard', 10, 'images/Keyboard.jpg'),
-(19, 'Mouse', 10, 'images/mouse.jpg'),
-(20, 'Headset', 10, 'images/Headset.jpg');
+(17, 'Laptop', 8, '../images/Laptop.jpg'),
+(18, 'Keyboard', 10, '../images/Keyboard.jpg'),
+(19, 'Mouse', 10, '../images/mouse.jpg'),
+(20, 'Headset', 10, '../images/Headset.jpg'),
+(21, 'Speaker', 10, '../images/speaker.jpg');
 
 -- --------------------------------------------------------
 
@@ -205,7 +206,7 @@ ALTER TABLE `anggota`
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `peminjaman`

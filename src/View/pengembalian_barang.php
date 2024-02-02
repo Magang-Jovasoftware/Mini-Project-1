@@ -1,7 +1,7 @@
 <?php
-include 'Database.php';
-include 'BarangController.php';
-include 'PengembalianBarangController.php';
+include '../Controller/Database.php';
+include '../Controller/BarangController.php';
+include '../Controller/PengembalianBarangController.php';
 
 $database = new Database();
 $koneksi = $database->koneksi;  
@@ -53,7 +53,7 @@ $daftarPengembalian = $pengembalianController->getDaftarPengembalian();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pengembalian Barang</title>
-    <link href="./output.css" rel="stylesheet">
+    <link href="../output.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
 <div class="container mx-auto p-8 mt-10 bg-white rounded-lg shadow-lg">
@@ -124,7 +124,7 @@ $daftarPengembalian = $pengembalianController->getDaftarPengembalian();
         </tbody>
     </table>
 
-    <a href="index.php" class="text-blue-500">Kembali ke Daftar Peminjaman</a>
+    <a href="../View/index.php" class="text-blue-500">Kembali ke Daftar Peminjaman</a>
 </div>
 
 </body>

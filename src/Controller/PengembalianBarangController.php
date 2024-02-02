@@ -1,5 +1,5 @@
 <?php
-include 'Barang.php';
+include '../Model/Barang.php';
 
 class PengembalianBarangController {
     private $database;
