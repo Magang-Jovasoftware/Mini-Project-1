@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 02, 2024 at 09:48 AM
+-- Generation Time: Mar 01, 2024 at 03:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,8 +55,9 @@ CREATE TABLE `anggota` (
 --
 
 INSERT INTO `anggota` (`id`, `nama`) VALUES
-(1, 'rehan'),
-(3, 'eko');
+(1, 'Rehan'),
+(3, 'Eko'),
+(4, 'Budi');
 
 -- --------------------------------------------------------
 
@@ -76,8 +77,8 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id`, `nama`, `stok`, `gambar`) VALUES
-(17, 'Laptop', 8, '../images/Laptop.jpg'),
-(18, 'Keyboard', 10, '../images/Keyboard.jpg'),
+(17, 'Laptop', 10, '../images/Laptop.jpg'),
+(18, 'Keyboard', 8, '../images/Keyboard.jpg'),
 (19, 'Mouse', 10, '../images/mouse.jpg'),
 (20, 'Headset', 10, '../images/Headset.jpg'),
 (21, 'Speaker', 10, '../images/speaker.jpg');
@@ -100,8 +101,7 @@ CREATE TABLE `peminjaman` (
 --
 
 INSERT INTO `peminjaman` (`id`, `id_anggota`, `id_admin`, `tanggal_pakai`) VALUES
-(39, 1, 1, '2024-01-23'),
-(40, 3, 1, '2024-01-23');
+(164, 1, 1, '2024-03-01');
 
 -- --------------------------------------------------------
 
@@ -120,7 +120,7 @@ CREATE TABLE `peminjaman_barang` (
 --
 
 INSERT INTO `peminjaman_barang` (`peminjaman_id`, `id_barang`, `jumlah`) VALUES
-(39, 17, 2);
+(164, 18, 2);
 
 -- --------------------------------------------------------
 
@@ -140,7 +140,7 @@ CREATE TABLE `pengembalian_barang` (
 --
 
 INSERT INTO `pengembalian_barang` (`pengembalian_id`, `id_barang`, `jumlah`, `tanggal_kembali`) VALUES
-(18, 19, 2, '2024-01-23');
+(35, 17, 2, '2024-03-01');
 
 --
 -- Indexes for dumped tables
@@ -200,7 +200,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `anggota`
 --
 ALTER TABLE `anggota`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `barang`
@@ -212,13 +212,13 @@ ALTER TABLE `barang`
 -- AUTO_INCREMENT for table `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
 
 --
 -- AUTO_INCREMENT for table `pengembalian_barang`
 --
 ALTER TABLE `pengembalian_barang`
-  MODIFY `pengembalian_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `pengembalian_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- Constraints for dumped tables

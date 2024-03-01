@@ -7,78 +7,67 @@ class PeminjamanController {
         $this->database = $database;
     }
 
-    public function pinjamBarang($idBarang, $peminjamNama, $jumlahPeminjaman) {
-        
+    public function pinjamBarang($idBarangs, $idPeminjam, $jumlahPeminjaman) {
         // Validasi input
-        if (empty($idBarang) || empty($peminjamNama) || empty($jumlahPeminjaman)) {
+        if (empty($idBarangs) || empty($idPeminjam) || empty($jumlahPeminjaman) || in_array('', $jumlahPeminjaman)) {
             return ['status' => 'error', 'message' => 'Semua kolom harus diisi'];
+        }        
+
+        // Mulai transaksi
+        $this->database->beginTransaction();
+
+        // Insert data peminjaman
+        $resultPeminjaman = $this->database->query("INSERT INTO peminjaman (id_anggota, id_admin, tanggal_pakai) VALUES ('$idPeminjam', '1', NOW())");
+
+        if (!$resultPeminjaman) {
+            $this->database->rollback();
+            return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
         }
 
-        // Cek stok barang
-        $stokResult = $this->database->query("SELECT stok FROM barang WHERE id = $idBarang");
+        // Dapatkan ID peminjaman yang baru saja dibuat
+        $peminjamanId = $this->database->insertId();
 
-        if ($stokResult) {
-            $rowStok = $stokResult->fetch_assoc();
-            $stok = $rowStok['stok'];
+        // Loop untuk setiap barang yang dipinjam
+        for ($i = 0; $i < count($idBarangs); $i++) {
+            $idBarang = $idBarangs[$i];
+            $jumlah = $jumlahPeminjaman[$i];
 
-            if ($jumlahPeminjaman > $stok) {
-                return ['status' => 'error', 'message' => 'Stok barang tidak cukup'];
-            }
+            // Cek stok barang
+            $stokResult = $this->database->query("SELECT stok FROM barang WHERE id = $idBarang");
 
-            // Mulai transaksi
-            $this->database->beginTransaction();
+            if ($stokResult) {
+                $rowStok = $stokResult->fetch_assoc();
+                $stok = $rowStok['stok'];
 
-            // Insert data anggota (jika belum ada)
-            $resultAnggota = $this->database->query("SELECT id FROM anggota WHERE nama = '$peminjamNama'");
+                if ($jumlah > $stok) {
+                    $this->database->rollback();
+                    return ['status' => 'error', 'message' => 'Stok barang tidak cukup'];
+                }
 
-            if ($resultAnggota->num_rows === 0) {
-                $resultInsertAnggota = $this->database->query("INSERT INTO anggota (nama) VALUES ('$peminjamNama')");
+                // Insert data peminjaman_barang
+                $resultPeminjamanBarang = $this->database->query("INSERT INTO peminjaman_barang (peminjaman_id, id_barang, jumlah) VALUES ('$peminjamanId', '$idBarang', '$jumlah')");
 
-                if (!$resultInsertAnggota) {
+                if (!$resultPeminjamanBarang) {
                     $this->database->rollback();
                     return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
                 }
-            }
 
-            // Dapatkan ID anggota
-            $resultAnggota = $this->database->query("SELECT id FROM anggota WHERE nama = '$peminjamNama'");
-            $rowAnggota = $resultAnggota->fetch_assoc();
-            $idAnggota = $rowAnggota['id'];
+                // Kurangi stok barang
+                $resultKurangiStok = $this->database->query("UPDATE barang SET stok = stok - $jumlah WHERE id = $idBarang");
 
-            // Insert data peminjaman
-            $resultPeminjaman = $this->database->query("INSERT INTO peminjaman (id_anggota, id_admin, tanggal_pakai) VALUES ('$idAnggota', '1', NOW())");
-
-            if (!$resultPeminjaman) {
-                $this->database->rollback();
+                if (!$resultKurangiStok) {
+                    $this->database->rollback();
+                    return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
+                }
+            } else {
                 return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
             }
-
-            // Dapatkan ID peminjaman yang baru saja dibuat
-            $peminjamanId = $this->database->insertId();
-
-            // Insert data peminjaman_barang
-            $resultPeminjamanBarang = $this->database->query("INSERT INTO peminjaman_barang (peminjaman_id, id_barang, jumlah) VALUES ('$peminjamanId', '$idBarang', '$jumlahPeminjaman')");
-
-            if (!$resultPeminjamanBarang) {
-                $this->database->rollback();
-                return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
-            }
-
-            // Kurangi stok barang
-            $resultKurangiStok = $this->database->query("UPDATE barang SET stok = stok - $jumlahPeminjaman WHERE id = $idBarang");
-
-            if (!$resultKurangiStok) {
-                $this->database->rollback();
-                return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
-            }
-
-            // Commit transaksi
-            $this->database->commit();
-
-            return ['status' => 'success', 'message' => 'Data berhasil disimpan'];
-        } else {
-            return ['status' => 'error', 'message' => 'Gagal menyimpan data'];
         }
+
+        // Commit transaksi
+        $this->database->commit();
+
+        return ['status' => 'success', 'message' => 'Data berhasil disimpan'];
     }
 
     // Metode untuk mengambil data peminjaman dari database
@@ -104,5 +93,15 @@ class PeminjamanController {
         }
 
         return $peminjamans;
+    }
+
+    public function getDaftarAnggota() {
+        $result = $this->database->query("SELECT * FROM anggota");
+        $daftarAnggota = [];
+        while ($row = $result->fetch_assoc()) {
+            $anggota = new Anggota($row['id'], $row['nama']);
+            $daftarAnggota[] = $anggota;
+        }
+        return $daftarAnggota;
     }
 }
