@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $peminjamans = $peminjamanController->getDaftarPeminjaman();
 $daftarBarang = $barangController->getDaftarBarang();
 $daftarAnggota = $peminjamanController->getDaftarAnggota();
+$peminjamansGrouped = groupPeminjamanByPeminjam($peminjamans);
 ?>
 
 <!DOCTYPE html>
@@ -96,32 +97,21 @@ $daftarAnggota = $peminjamanController->getDaftarAnggota();
 
 
     <!-- Tampilkan daftar peminjaman barang -->
-<h2 class="text-xl font-bold mb-4">Daftar Peminjaman Barang</h2>
-<table class="border-collapse border border-gray-800 w-full mx-auto">
-    <thead>
-        <tr class="bg-gray-800 text-white">
-            <th class="p-2 text-center">Nama Peminjam</th>
-            <th class="p-2 text-center">Nama Barang</th>
-            <th class="p-2 text-center">Gambar</th>
-            <th class="p-2 text-center">Jumlah Barang</th>
-            <th class="p-2 text-center">Tanggal Pakai</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        foreach ($peminjamans as $peminjaman) {
-            echo "<tr class=\"border border-gray-800\">";
-            $tanggalPakai = date("d-m-Y", strtotime($peminjaman->getTanggalPakai()));
-            echo "<td class=\"p-2 text-center\">{$peminjaman->getPeminjam()->getNama()}</td>";
-            echo "<td class=\"p-2 text-center\">{$peminjaman->getBarang()->getNama()}</td>";
-            echo "<td class=\"p-2 text-center\"><img src=\"{$peminjaman->getBarang()->getGambar()}\" alt=\"{$peminjaman->getBarang()->getNama()}\" class=\"w-20 h-20 object-cover mt-2 mx-auto\"></td>";
-            echo "<td class=\"p-2 text-center\">{$peminjaman->getJumlah()} unit</td>";
-            echo "<td class=\"p-2 text-center\">{$tanggalPakai}</td>";
-            echo "</tr>";
-        }
-        ?>
-    </tbody>
-</table>
+    <h2 class="text-xl font-bold mb-4">Daftar Peminjaman Barang</h2>
+    <table class="border-collapse border border-gray-800 w-full mx-auto">
+        <thead>
+            <tr class="bg-gray-800 text-white">
+                <th class="p-2 text-center">Nama Peminjam</th>
+                <th class="p-2 text-center">Nama Barang</th>
+                <th class="p-2 text-center">Gambar</th>
+                <th class="p-2 text-center">Jumlah Barang</th>
+                <th class="p-2 text-center">Tanggal Pakai</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php renderPeminjamanTable($peminjamansGrouped); ?>
+        </tbody>
+    </table>
 </div>
 </div>
 

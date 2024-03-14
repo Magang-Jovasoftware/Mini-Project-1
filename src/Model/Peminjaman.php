@@ -17,6 +17,10 @@ class Peminjaman {
         $this->jumlah = $jumlah;
     }
 
+    Public function getId(){
+        return $this->id;
+    }
+
     public function getBarang() {
         return $this->barang;
     }

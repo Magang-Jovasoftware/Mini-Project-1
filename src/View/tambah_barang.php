@@ -101,12 +101,12 @@ $daftarBarang = $barangController->getDaftarBarang();
             <?php
             foreach ($daftarBarang as $barang) {
                 echo "<tr class=\"border border-gray-800\">";
-                echo "<td class=\"p-2 text-center\">{$barang->getNama()}</td>";
-                echo "<td class=\"p-2 text-center\">Stok: {$barang->getStok()}</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$barang->getNama()}</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">Stok: {$barang->getStok()}</td>";
 
                 // Tampilkan gambar jika ada
                 $gambar = $barang->getGambar();
-                echo "<td class=\"p-2 text-center\">";
+                echo "<td class=\"p-2 text-center border border-gray-800\">";
                 if (!empty($gambar)) {
                     echo "<img src=\"$gambar\" alt=\"{$barang->getNama()}\" class=\"w-20 h-20 object-cover mx-auto\">";
                 }

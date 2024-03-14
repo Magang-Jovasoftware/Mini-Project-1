@@ -105,3 +105,41 @@ class PeminjamanController {
         return $daftarAnggota;
     }
 }
+
+function groupPeminjamanByPeminjam($peminjamans) {
+    $peminjamansGrouped = [];
+
+    foreach ($peminjamans as $peminjaman) {
+        $namaPeminjam = $peminjaman->getPeminjam()->getNama();
+        $peminjamanId = $peminjaman->getId(); // Nomor identifikasi unik untuk setiap peminjaman
+
+        if (!isset($peminjamansGrouped[$namaPeminjam][$peminjamanId])) {
+            $peminjamansGrouped[$namaPeminjam][$peminjamanId] = [];
+        }
+
+        $peminjamansGrouped[$namaPeminjam][$peminjamanId][] = $peminjaman;
+    }
+
+    return $peminjamansGrouped;
+}
+
+function renderPeminjamanTable($peminjamansGrouped) {
+    foreach ($peminjamansGrouped as $namaPeminjam => $peminjamansById) {
+        foreach ($peminjamansById as $peminjamanId => $peminjamans) {
+            $spanCount = count($peminjamans);
+
+            foreach ($peminjamans as $index => $peminjaman) {
+                $tanggalPakai = date("d-m-Y", strtotime($peminjaman->getTanggalPakai()));
+                $namaPeminjamCell = ($index === 0) ? "<td rowspan=\"$spanCount\" class=\"p-2 text-center border border-gray-800\">{$namaPeminjam}</td>" : "";
+
+                echo "<tr class=\"border border-gray-800\">";
+                echo $namaPeminjamCell;
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$peminjaman->getBarang()->getNama()}</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\"><img src=\"{$peminjaman->getBarang()->getGambar()}\" alt=\"{$peminjaman->getBarang()->getNama()}\" class=\"w-20 h-20 object-cover mt-2 mx-auto\"></td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$peminjaman->getJumlah()} unit</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$tanggalPakai}</td>";
+                echo "</tr>";
+            }
+        }
+    }
+}

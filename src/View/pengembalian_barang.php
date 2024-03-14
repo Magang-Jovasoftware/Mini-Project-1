@@ -11,25 +11,18 @@ $pengembalianController = new PengembalianBarangController($database);
 
 // Proses pengembalian barang
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $idPeminjaman = $_POST['peminjaman'];
     $idBarang = $_POST['barang'];
     $jumlahPengembalian = $_POST['jumlah'];
 
     // Validasi input
-    if (empty($idBarang) || empty($jumlahPengembalian)) {
+    if (empty($idPeminjaman) || empty($idBarang) || empty($jumlahPengembalian)) {
         header("Location: pengembalian_barang.php?status=error&message=Semua%20kolom%20harus%20diisi");
         exit();
     }
 
-    // Periksa apakah barang sedang dipinjam
-    $resultCekPengembalian = $koneksi->query("SELECT * FROM pengembalian_barang WHERE id_barang = $idBarang AND jumlah = $jumlahPengembalian");
-
-    if ($resultCekPeminjaman->num_rows === 0) {
-        header("Location: pengembalian_barang.php?status=error&message=Barang%20tidak%20dipinjam");
-        exit();
-    }
-
     // Proses pengembalian menggunakan PengembalianController
-    $pengembalianController->prosesPengembalian($idBarang, $jumlahPengembalian);
+    $result = $pengembalianController->prosesPengembalian($idPeminjaman, $idBarang, $jumlahPengembalian);
 
     if ($result['status'] === 'error') {
         header("Location: pengembalian_barang.php?status=error&message=" . urlencode($result['message']));
@@ -40,15 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Ambil data barang yang sedang dipinjam dari database
-$daftarBarangDipinjam = $koneksi->query("SELECT peminjaman_barang.*, barang.nama AS nama_barang
-                                        FROM peminjaman_barang
-                                        JOIN barang ON peminjaman_barang.id_barang = barang.id
-                                        WHERE peminjaman_barang.jumlah > 0");
-
-
 // Ambil data pengembalian barang dari database
 $daftarPengembalian = $pengembalianController->getDaftarPengembalian();
+
+// Ambil data peminjaman dari database untuk dropdown
+$daftarPeminjaman = $koneksi->query("SELECT peminjaman.*, anggota.nama AS nama_peminjam
+                                    FROM peminjaman
+                                    JOIN anggota ON peminjaman.id_anggota = anggota.id
+                                    ORDER BY peminjaman.id DESC");
 ?>
 
 <!DOCTYPE html>
@@ -77,18 +69,22 @@ $daftarPengembalian = $pengembalianController->getDaftarPengembalian();
     <form action="pengembalian_barang.php" method="post" class="mb-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="barang" class="block text-gray-700 font-bold">Barang yang Dipinjam:</label>
-                <select name="barang" id="barang" class="w-full p-2 border rounded">
-                    <option value="" selected disabled>Pilih Barang</option>
+                <label for="peminjaman" class="block text-gray-700 font-bold">Pilih Peminjaman:</label>
+                <select name="peminjaman" id="peminjaman" class="w-full p-2 border rounded">
+                    <option value="" selected disabled>Pilih Peminjaman</option>
                     <?php
-                    // Tampilkan daftar barang yang sedang dipinjam
-                    while ($rowBarangDipinjam = $daftarBarangDipinjam->fetch_assoc()) {
-                        echo "<option value=\"{$rowBarangDipinjam['id_barang']}\" data-jumlah-peminjaman=\"{$rowBarangDipinjam['jumlah']}\">{$rowBarangDipinjam['nama_barang']}</option>";
+                    // Tampilkan daftar peminjaman yang sedang berlangsung
+                    while ($rowPeminjaman = $daftarPeminjaman->fetch_assoc()) {
+                        echo "<option value=\"{$rowPeminjaman['id']}\">{$rowPeminjaman['nama_peminjam']}</option>";
                     }
                     ?>
+                </select>
+            </div>
+            <div>
+                <label for="barang" class="block text-gray-700 font-bold">Barang yang Dipinjam:</label>
+                <select name="barang" id="barang" class="w-full p-2 border rounded">
                 </select>   
             </div>
-
             <div class="mb-4">
                 <label for="jumlah" class="block text-gray-700 font-bold">Jumlah Pengembalian:</label>
                 <input type="number" name="jumlah" id="jumlah" class="w-full p-2 border rounded" value="<?php echo $rowBarangDipinjam['jumlah']; ?>" readonly>
@@ -114,14 +110,14 @@ $daftarPengembalian = $pengembalianController->getDaftarPengembalian();
             foreach ($daftarPengembalian as $pengembalian) {
                 echo "<tr class=\"border border-gray-800\">";
                 $tanggalKembali = date("d-m-Y", strtotime($pengembalian['tanggal_kembali']));
-                echo "<td class=\"p-2 text-center\">{$pengembalian['nama']}</td>";
-                echo "<td class=\"p-2 text-center\">{$pengembalian['jumlah']} unit</td>";
-                echo "<td class=\"p-2 text-center\">{$tanggalKembali}</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$pengembalian['nama']}</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$pengembalian['jumlah']} unit</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800\">{$tanggalKembali}</td>";
                 
                 // Tambahkan kondisi untuk menampilkan status
                 $statusKeterangan = $pengembalian['pengembalian_id'] ? 'Sudah Kembali' : 'Belum Kembali';
                 $statusWarna = $pengembalian['pengembalian_id'] ? 'text-green-600' : 'text-red-600';
-                echo "<td class=\"p-2 text-center {$statusWarna}\">{$statusKeterangan}</td>";
+                echo "<td class=\"p-2 text-center border border-gray-800 {$statusWarna}\">{$statusKeterangan}</td>";
 
                 echo "</tr>";
             }
@@ -133,10 +129,31 @@ $daftarPengembalian = $pengembalianController->getDaftarPengembalian();
 </div>
 
 <script>
-document.getElementById('barang').addEventListener('change', function() {
-    var jumlahPeminjaman = this.options[this.selectedIndex].getAttribute('data-jumlah-peminjaman');
-    document.getElementById('jumlah').value = jumlahPeminjaman;
+document.getElementById('peminjaman').addEventListener('change', function() {
+    var idPeminjaman = this.value;
+    fetch('../Controller/get_barang_by_peminjaman.php?id=' + idPeminjaman)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('barang').innerHTML = '';
+            data.forEach(barang => {
+                var option = document.createElement('option');
+                option.value = barang.id_barang;
+                option.textContent = barang.nama_barang;
+                option.setAttribute('data-jumlah-peminjaman', barang.jumlah);
+                document.getElementById('barang').appendChild(option);
+            });
+            updateJumlahPeminjaman();
+        });
 });
+
+document.getElementById('barang').addEventListener('change', function() {
+    updateJumlahPeminjaman();
+});
+
+function updateJumlahPeminjaman() {
+    var jumlahPeminjaman = document.getElementById('barang').selectedOptions[0].getAttribute('data-jumlah-peminjaman');
+    document.getElementById('jumlah').value = jumlahPeminjaman;
+}
 </script>
 
 
