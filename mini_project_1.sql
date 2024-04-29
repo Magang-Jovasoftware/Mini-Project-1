@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 01, 2024 at 03:30 AM
+-- Generation Time: Apr 29, 2024 at 04:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -56,8 +56,8 @@ CREATE TABLE `anggota` (
 
 INSERT INTO `anggota` (`id`, `nama`) VALUES
 (1, 'Rehan'),
-(3, 'Eko'),
-(4, 'Budi');
+(2, 'Eko'),
+(3, 'Budi');
 
 -- --------------------------------------------------------
 
@@ -77,11 +77,11 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id`, `nama`, `stok`, `gambar`) VALUES
-(17, 'Laptop', 10, '../images/Laptop.jpg'),
-(18, 'Keyboard', 8, '../images/Keyboard.jpg'),
-(19, 'Mouse', 10, '../images/mouse.jpg'),
-(20, 'Headset', 10, '../images/Headset.jpg'),
-(21, 'Speaker', 10, '../images/speaker.jpg');
+(1, 'Laptop', 10, '../images/Laptop.jpg'),
+(2, 'Keyboard', 10, '../images/Keyboard.jpg'),
+(3, 'Mouse', 10, '../images/mouse.jpg'),
+(4, 'Headset', 10, '../images/Headset.jpg'),
+(5, 'Speaker', 10, '../images/speaker.jpg');
 
 -- --------------------------------------------------------
 
@@ -96,13 +96,6 @@ CREATE TABLE `peminjaman` (
   `tanggal_pakai` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `peminjaman`
---
-
-INSERT INTO `peminjaman` (`id`, `id_anggota`, `id_admin`, `tanggal_pakai`) VALUES
-(164, 1, 1, '2024-03-01');
-
 -- --------------------------------------------------------
 
 --
@@ -115,13 +108,6 @@ CREATE TABLE `peminjaman_barang` (
   `jumlah` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `peminjaman_barang`
---
-
-INSERT INTO `peminjaman_barang` (`peminjaman_id`, `id_barang`, `jumlah`) VALUES
-(164, 18, 2);
-
 -- --------------------------------------------------------
 
 --
@@ -132,15 +118,10 @@ CREATE TABLE `pengembalian_barang` (
   `pengembalian_id` int(11) NOT NULL,
   `id_barang` int(11) DEFAULT NULL,
   `jumlah` int(11) DEFAULT NULL,
-  `tanggal_kembali` date DEFAULT NULL
+  `tanggal_kembali` date DEFAULT NULL,
+  `denda` int(11) DEFAULT 0,
+  `peminjaman_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `pengembalian_barang`
---
-
-INSERT INTO `pengembalian_barang` (`pengembalian_id`, `id_barang`, `jumlah`, `tanggal_kembali`) VALUES
-(35, 17, 2, '2024-03-01');
 
 --
 -- Indexes for dumped tables
@@ -184,7 +165,8 @@ ALTER TABLE `peminjaman_barang`
 --
 ALTER TABLE `pengembalian_barang`
   ADD PRIMARY KEY (`pengembalian_id`),
-  ADD KEY `id_barang` (`id_barang`);
+  ADD KEY `id_barang` (`id_barang`),
+  ADD KEY `peminjaman_id` (`peminjaman_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -200,25 +182,25 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `anggota`
 --
 ALTER TABLE `anggota`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `peminjaman`
 --
 ALTER TABLE `peminjaman`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=165;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pengembalian_barang`
 --
 ALTER TABLE `pengembalian_barang`
-  MODIFY `pengembalian_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `pengembalian_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -242,7 +224,8 @@ ALTER TABLE `peminjaman_barang`
 -- Constraints for table `pengembalian_barang`
 --
 ALTER TABLE `pengembalian_barang`
-  ADD CONSTRAINT `pengembalian_barang_ibfk_1` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id`);
+  ADD CONSTRAINT `pengembalian_barang_ibfk_1` FOREIGN KEY (`id_barang`) REFERENCES `barang` (`id`),
+  ADD CONSTRAINT `pengembalian_barang_ibfk_2` FOREIGN KEY (`peminjaman_id`) REFERENCES `peminjaman` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

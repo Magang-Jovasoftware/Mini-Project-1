@@ -35,11 +35,14 @@ $peminjamansGrouped = groupPeminjamanByPeminjam($peminjamans);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Peminjaman Barang</title>
-    <link href="../output.css" rel="stylesheet">
+    <link href="../output.css" rel="stylesheet">    
 </head>
-<body class="bg-gray-100">
+<body>
+<div class="min-h-screen bg-gray-100 flex">
+<?php include 'sidebar.php'; ?>
+<div class="flex-grow">
 <div class="container mx-auto p-8 mt-10 bg-white rounded-lg shadow-lg">
-    <h1 class="text-2xl font-bold mb-6">Form Peminjaman Barang</h1>
+    <h1 class="text-2xl font-bold mb-6">Peminjaman Barang</h1>
 
     <?php
     // Tampilkan notifikasi jika ada
@@ -51,8 +54,14 @@ $peminjamansGrouped = groupPeminjamanByPeminjam($peminjamans);
         echo "<p class=\"$colorClass font-semibold mb-4\">$message</p>";
     }
     ?>
+    <!-- catatan -->
+    <div class="mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+        <p class="font-bold">Catatan:</p>
+        <p>Peminjaman barang memiliki batas waktu maksimal 3 hari. Melebihi batas waktu tersebut akan dikenakan denda sebesar Rp 50.000 per hari.</p>
+    </div>
 
-    <form action="index.php" method="post" class="mb-6">
+    <button id="toggleFormButton" class="mb-4 bg-green-500 text-white px-4 py-2 rounded">Pinjam Barang</button>
+    <form id="idForm" action="index.php" style="display: none;" method="post" class="mb-6">
         <div id="barang-form">
             <div class="mb-4">
                     <label for="peminjam" class="block text-gray-700 font-bold">Nama Peminjam:</label>
@@ -89,16 +98,9 @@ $peminjamansGrouped = groupPeminjamanByPeminjam($peminjamans);
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
     </form>
 
-    <!-- Tambahkan navigasi -->
-    <div class="mb-6">
-        <a href="../View/tambah_barang.php" class="bg-green-500 text-white px-4 py-2 rounded">Daftar Barang</a>
-        <a href="../View/pengembalian_barang.php" class="bg-green-500 text-white px-4 py-2 rounded">Pengembalian Barang</a>
-    </div>
-
-
     <!-- Tampilkan daftar peminjaman barang -->
     <h2 class="text-xl font-bold mb-4">Daftar Peminjaman Barang</h2>
-    <table class="border-collapse border border-gray-800 w-full mx-auto">
+    <table class="border-collapse border border-gray-800 w-full mx-auto mb-6">
         <thead>
             <tr class="bg-gray-800 text-white">
                 <th class="p-2 text-center">Nama Peminjam</th>
@@ -112,6 +114,7 @@ $peminjamansGrouped = groupPeminjamanByPeminjam($peminjamans);
             <?php renderPeminjamanTable($peminjamansGrouped); ?>
         </tbody>
     </table>
+</div>
 </div>
 </div>
 
@@ -158,6 +161,18 @@ $database->closeConnection();
         newRow.appendChild(jumlahInput);
         form.appendChild(newRow);
     });
+
+    // JavaScript untuk menampilkan/menyembunyikan formulir tambah barang
+    const toggleFormButton = document.getElementById('toggleFormButton');
+        const barangForm = document.getElementById('idForm');
+
+        toggleFormButton.addEventListener('click', function() {
+            if (barangForm.style.display === 'none') {
+                barangForm.style.display = 'block';
+            } else {
+                barangForm.style.display = 'none';
+            }
+        });
 </script>
 
 </body>

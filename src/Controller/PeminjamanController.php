@@ -75,12 +75,17 @@ class PeminjamanController {
     {
         $koneksi = $this->database->koneksi;
         $resultPeminjaman = $koneksi->query("SELECT peminjaman.*, anggota.nama AS nama_peminjam, barang.nama AS nama_barang, peminjaman_barang.jumlah, barang.gambar, admin.nama AS nama_admin
-                                    FROM peminjaman 
-                                    JOIN peminjaman_barang ON peminjaman.id = peminjaman_barang.peminjaman_id
-                                    JOIN barang ON peminjaman_barang.id_barang = barang.id
-                                    JOIN anggota ON peminjaman.id_anggota = anggota.id
-                                    JOIN admin ON peminjaman.id_admin = admin.id
-                                    ORDER BY peminjaman.id DESC");
+                                                FROM peminjaman 
+                                                JOIN peminjaman_barang ON peminjaman.id = peminjaman_barang.peminjaman_id
+                                                JOIN barang ON peminjaman_barang.id_barang = barang.id
+                                                JOIN anggota ON peminjaman.id_anggota = anggota.id
+                                                JOIN admin ON peminjaman.id_admin = admin.id
+                                                WHERE peminjaman.id NOT IN (
+                                                    SELECT DISTINCT pengembalian_barang.peminjaman_id 
+                                                    FROM pengembalian_barang
+                                                    WHERE pengembalian_barang.id_barang = peminjaman_barang.id_barang
+                                                )
+                                            ");
 
         $peminjamans = [];
         while ($rowPeminjaman = $resultPeminjaman->fetch_assoc()) {
@@ -129,7 +134,7 @@ function renderPeminjamanTable($peminjamansGrouped) {
             $spanCount = count($peminjamans);
 
             foreach ($peminjamans as $index => $peminjaman) {
-                $tanggalPakai = date("d-m-Y", strtotime($peminjaman->getTanggalPakai()));
+                $tanggalPakai = date('l, d-m-Y', strtotime($peminjaman->getTanggalPakai()));
                 $namaPeminjamCell = ($index === 0) ? "<td rowspan=\"$spanCount\" class=\"p-2 text-center border border-gray-800\">{$namaPeminjam}</td>" : "";
 
                 echo "<tr class=\"border border-gray-800\">";

@@ -51,10 +51,16 @@ $daftarBarang = $barangController->getDaftarBarang();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Barang</title>
+    <title>Peminjaman Barang</title>
     <link href="../output.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
-<body class="bg-gray-100">
+<body>
+<div class="min-h-screen bg-gray-100 flex">
+<?php include 'sidebar.php'; ?>
+<div class="flex-grow">
 <div class="container mx-auto p-8 mt-10 bg-white rounded-lg shadow-lg">
     <h1 class="text-2xl font-bold mb-6">Tambah Barang</h1>
 
@@ -117,8 +123,8 @@ $daftarBarang = $barangController->getDaftarBarang();
             ?>
         </tbody>
     </table>
-
-    <a href="../View/index.php" class="text-blue-500">Kembali ke Daftar Peminjaman</a>
+</div>
+</div>
 </div>
 
 <script>
